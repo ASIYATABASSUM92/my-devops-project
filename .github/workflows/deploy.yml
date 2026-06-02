@@ -1,0 +1,36 @@
+name: Deploy Static Website
+
+# This tells the pipeline to trigger automatically
+on:
+  push:
+    branches:
+      - main
+
+# These are the permissions GitHub Actions needs to publish the site
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# This tells the pipeline what steps to take
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
